@@ -60,6 +60,15 @@ namespace UnitTest
             Assert.Equal("UnitTest.TestCSharp+CustomDictionary, UnitTest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", name);
         }
 
+        [Fact]
+        public void TestJoshua()
+        {
+            var j = TestObject.Joshua();
+            //var h = (IEnumerable<Uri>)j;
+            var h = (IList<Uri>)j;
+            Assert.Equal(j, h);
+        }
+
 #if NET5_0
         [Fact]
         public void TestDynamicInterfaceCastingOnValidInterface()
