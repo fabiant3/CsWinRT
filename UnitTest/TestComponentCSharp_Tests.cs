@@ -45,12 +45,12 @@ namespace UnitTest
         }
 
         [Fact]
-        public void TestJoshua()
+        public void TestVectorConversion()
         {
-            var j = TestObject.Joshua();
-            //var h = (IEnumerable<Uri>)j;
-            var h = (IList<Uri>)j;
-            Assert.Equal(j, h);
+            var vec = TestObject.VectorConversion();
+            //var h = (IEnumerable<Uri>)vec;
+            var lis = (IList<Uri>)vec;
+            Assert.Equal(vec, lis);
         }
 
 #if NET5_0

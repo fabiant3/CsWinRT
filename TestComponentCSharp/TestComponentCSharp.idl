@@ -114,7 +114,7 @@ namespace TestComponentCSharp
         String GetTypePropertyAbiName();
         String GetTypePropertyKind();
 
-        Windows.Foundation.Collections.IVector<IInspectable> Joshua();
+        Windows.Foundation.Collections.IVector<IInspectable> VectorConversion();
 
         // static
         static Int32 StaticIntProperty;
