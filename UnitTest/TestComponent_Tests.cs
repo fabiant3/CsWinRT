@@ -599,12 +599,11 @@ namespace UnitTest
         }
 
         [Fact]
-        public void Collections_List2()
+        public void CastListToEnum_String()
         {
             string[] a = new string[] { "apples", "oranges", "pears" };
             IList<string> b = null;
             var c = Tests.Collection5(a, out b);
-            // Assert.True(SequencesEqual(a, b, c));
             var j = (IEnumerable<string>)(object)b;
             Assert.True(SequencesEqual(a, b, j));
         }
