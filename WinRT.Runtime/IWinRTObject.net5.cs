@@ -63,6 +63,19 @@ namespace WinRT
                     return true;
                 }
             }
+            else if (type == typeof(System.Collections.IEnumerable))
+            {
+                Type iEnum = typeof(System.Collections.Generic.IEnumerable<object>);
+                if (IsInterfaceImplemented(iEnum.TypeHandle, false))
+                {
+                    if (QueryInterfaceCache.TryGetValue(iEnum.TypeHandle, out var typedObjRef) && !QueryInterfaceCache.TryAdd(interfaceType, typedObjRef))
+                    {
+                        typedObjRef.Dispose();
+                    }
+                    return true;
+                }
+            }
+
 
             Type helperType = type.FindHelperType();
             if (helperType is null || !helperType.IsInterface)
@@ -117,7 +130,7 @@ namespace WinRT
                 if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
                     Type iReadOnlyDictionary = typeof(IReadOnlyDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
-                    
+
                     if (IsInterfaceImplemented(iReadOnlyDictionary.TypeHandle, false))
                     {
                         return GetInterfaceImplementation(iReadOnlyDictionary.TypeHandle);
@@ -144,6 +157,15 @@ namespace WinRT
                 if (IsInterfaceImplemented(iList.TypeHandle, false))
                 {
                     return GetInterfaceImplementation(iList.TypeHandle);
+                }
+            }
+            else if (type == typeof(System.Collections.IEnumerable))
+            {
+
+                Type iEnum = typeof(System.Collections.Generic.IEnumerable<object>);
+                if (IsInterfaceImplemented(iEnum.TypeHandle, false))
+                {
+                    return GetInterfaceImplementation(iEnum.TypeHandle);
                 }
             }
 
