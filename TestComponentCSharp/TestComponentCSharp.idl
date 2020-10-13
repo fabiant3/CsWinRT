@@ -114,6 +114,8 @@ namespace TestComponentCSharp
         String GetTypePropertyAbiName();
         String GetTypePropertyKind();
 
+        Windows.Foundation.Collections.IVector<IInspectable> Joshua();
+
         // static
         static Int32 StaticIntProperty;
         static event Windows.Foundation.EventHandler<Int32> StaticIntPropertyChanged;

@@ -599,6 +599,17 @@ namespace UnitTest
         }
 
         [Fact]
+        public void Collections_List2()
+        {
+            string[] a = new string[] { "apples", "oranges", "pears" };
+            IList<string> b = null;
+            var c = Tests.Collection5(a, out b);
+            // Assert.True(SequencesEqual(a, b, c));
+            var j = (IEnumerable<string>)(object)b;
+            Assert.True(SequencesEqual(a, b, j));
+        }
+
+        [Fact]
         public void Collections_ReadOnly_List()
         {
             string[] a = new string[] { "apples", "oranges", "pears" };

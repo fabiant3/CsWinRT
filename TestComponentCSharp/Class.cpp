@@ -135,6 +135,13 @@ namespace winrt::TestComponentCSharp::implementation
         winrt::hstring m_name;
     };
 
+    Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable> Class::Joshua()
+    {
+        auto vec = single_threaded_vector<Windows::Foundation::Uri>({ Uri(L"https://microsoft.com"), Uri(L"https://google.com") });
+        return vec.as<Windows::Foundation::Collections::IVector<Windows::Foundation::IInspectable>>();
+    };
+
+
     Class::Class() :
         Class(0, L"")
     {

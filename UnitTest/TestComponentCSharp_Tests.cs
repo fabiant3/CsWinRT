@@ -44,6 +44,15 @@ namespace UnitTest
             Assert.Equal("Metadata", TestObject.GetTypePropertyKind());
         }
 
+        [Fact]
+        public void TestJoshua()
+        {
+            var j = TestObject.Joshua();
+            //var h = (IEnumerable<Uri>)j;
+            var h = (IList<Uri>)j;
+            Assert.Equal(j, h);
+        }
+
 #if NET5_0
         [Fact]
         public void TestDynamicInterfaceCastingOnValidInterface()
