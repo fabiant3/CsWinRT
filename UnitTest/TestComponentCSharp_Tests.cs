@@ -45,11 +45,15 @@ namespace UnitTest
         }
 
         [Fact]
-        public void TestVectorConversion()
+        public void TestVectorConversion() // brb scott and mano
         {
             var vec = TestObject.VectorConversion();
-            //var h = (IEnumerable<Uri>)vec;
-            var lis = (IList<Uri>)vec;
+            // var enum_uri = (IEnumerable<Uri>)vec; version 1
+            // var list_uri = (IList<Uri>)vec; // version 2
+            var len = vec.Count;
+            IEnumerable cdr = vec;
+            var lis = cdr.Cast<Uri>();
+            var car = lis.First();
             Assert.Equal(vec, lis);
         }
 
