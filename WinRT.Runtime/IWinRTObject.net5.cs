@@ -170,14 +170,14 @@ namespace WinRT
                     AdditionalTypeData.GetOrAdd(hybrid,
                         (hybrid) => new ABI.System.Collections.Generic.IEnumerable<object>
                         .FromAbiHelper((ABI.System.Collections.Generic.IEnumerable<object>)this));
-                    return GetInterfaceImplementation(iEnum.TypeHandle);
+                    return interfaceType;
                 }
                 else 
                 {
                     AdditionalTypeData.GetOrAdd(hybrid,
-                        (hybrid) => new ABI.System.Collections.Generic.IEnumerable
-                        .FromAbiHelper((ABI.System.Collections.Generic.IEnumerable)this));
-                    return GetInterfaceImplementation(iEnum.TypeHandle);
+                        (hybrid) => new ABI.System.Collections.IEnumerable
+                        .FromAbiHelper((ABI.System.Collections.IEnumerable)this));
+                    return interfaceType;
                 }
             }
 
