@@ -129,6 +129,7 @@ namespace WinRT
                 Type itemType = type.GetGenericArguments()[0];
                 if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
+                    // todo: find K, V
                     Type iReadOnlyDictionary = typeof(IReadOnlyDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
 
                     if (IsInterfaceImplemented(iReadOnlyDictionary.TypeHandle, false))
@@ -162,9 +163,20 @@ namespace WinRT
             else if (type == typeof(System.Collections.IEnumerable))
             {
 
+                var hybrid = typeof(ABI.System.Collections.IEnumerableHybrid).TypeHandle;
                 Type iEnum = typeof(System.Collections.Generic.IEnumerable<object>);
                 if (IsInterfaceImplemented(iEnum.TypeHandle, false))
                 {
+                    AdditionalTypeData.GetOrAdd(hybrid,
+                        (hybrid) => new ABI.System.Collections.Generic.IEnumerable<object>
+                        .FromAbiHelper((ABI.System.Collections.Generic.IEnumerable<object>)this));
+                    return GetInterfaceImplementation(iEnum.TypeHandle);
+                }
+                else 
+                {
+                    AdditionalTypeData.GetOrAdd(hybrid,
+                        (hybrid) => new ABI.System.Collections.Generic.IEnumerable
+                        .FromAbiHelper((ABI.System.Collections.Generic.IEnumerable)this));
                     return GetInterfaceImplementation(iEnum.TypeHandle);
                 }
             }
