@@ -69,6 +69,15 @@ namespace UnitTest
             Assert.Equal(vec, lis);
         }
 
+        [Fact]
+        public void TestVectorConversion() // brb scott and mano
+        {
+            var vec = TestObject.VectorConversion();
+            var lis = vec.Cast<Uri>();
+            var lisFirst = lis.First();
+            Assert.Equal(vec, lis);
+        }
+
 #if NET5_0
         [Fact]
         public void TestDynamicInterfaceCastingOnValidInterface()
