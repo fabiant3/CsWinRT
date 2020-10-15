@@ -20,10 +20,7 @@ namespace ABI.System.Collections
 
         IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetHelper((IWinRTObject)this).GetEnumerator();
     }
-}
-
-namespace ABI.System.Collections
-{
+    
     [DynamicInterfaceCastableImplementation]
     interface IReadOnlyCollectionHybrid<T> : global::System.Collections.Generic.IReadOnlyCollection<T>
     {
@@ -42,10 +39,7 @@ namespace ABI.System.Collections
         global::System.Collections.Generic.IEnumerator<T> global::System.Collections.Generic.IEnumerable<T>.GetEnumerator() 
             => GetHelper((IWinRTObject)this).GetEnumerator();
     }
-}
 
-namespace ABI.System.Collections
-{
     [DynamicInterfaceCastableImplementation]
     interface ICollectionHybrid<T> : global::System.Collections.Generic.ICollection<T>
     {
