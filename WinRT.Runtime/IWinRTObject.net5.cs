@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using WinRT.Interop;
 
@@ -126,26 +127,36 @@ namespace WinRT
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyCollection<>))
             {
-                Type[] typeArray = type.GetGenericArguments(); 
-                Type itemType = typeArray[0];
-                Type K = typeArray[1];
-                Type V = typeArray[2];
+                Type itemType = type.GetGenericArguments()[0].GetGenericArguments()[0];
 
                 if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
-                    // todo: find K, V
+                    // todo: find K, V ; properly call FromAbiHelper
                     Type iReadOnlyDictionary = typeof(IReadOnlyDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
-
                     if (IsInterfaceImplemented(iReadOnlyDictionary.TypeHandle, false))
                     {
-                        var hybrid = typeof(IReadOnlyCollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
+                        var hybrid = typeof(ABI.System.Collections.IReadOnlyCollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
+                        
                         AdditionalTypeData.GetOrAdd(hybrid,
-                            (type) => new ABI.System.Collections.Generic.IReadOnlyDictionary<K, V>
+                            (hybrid) => new ABI.System.Collections.Generic.IReadOnlyDictionary<K, V>
                             .FromAbiHelper((global::System.Collections.Generic.IReadOnlyCollection<KeyValuePair<K, V>>)this));
-                        // cache the FromAbiHelper for IRODictionary & return IReadONlyCollectionHybrid<KeyValuePair<K,V>>
-                        return hybrid;
-                        // return GetInterfaceImplementation(iReadOnlyDictionary.TypeHandle);
+                        
+                        return interfaceType;
                     }
+
+                    // has to be IROList<KVP<K,V>>
+                    Type iReadOnlyListKVP = typeof(IReadOnlyList<>).MakeGenericType(itemType.GetGenericArguments());
+                    if (IsInterfaceImplemented(iReadOnlyListKVP.TypeHandle, false))
+                    {
+                        var hybrid = typeof(ABI.System.Collections.IReadOnlyCollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
+                        
+                        AdditionalTypeData.GetOrAdd(hybrid, 
+                            (hybrid) => new ABI.System.Collections.Generic.IReadOnlyList<KeyValuePair<K, V>>
+                            .FromAbiHelper((global::System.Collections.Generic.IReadOnlyCollection<KeyValuePair<K, V>>)this));
+                        
+                        return interfaceType;
+                    }
+
                 }
                 Type iReadOnlyList = typeof(IReadOnlyList<>).MakeGenericType(new[] { itemType });
                 if (IsInterfaceImplemented(iReadOnlyList.TypeHandle, false))
@@ -161,7 +172,25 @@ namespace WinRT
                     Type iDictionary = typeof(IDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iDictionary.TypeHandle, false))
                     {
-                        return GetInterfaceImplementation(iDictionary.TypeHandle);
+                        var hybrid = typeof(ABI.System.Collections.ICollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
+
+                        AdditionalTypeData.GetOrAdd(hybrid,
+                            (hybrid) => new ABI.System.Collections.Generic.IDictionary<K, V>
+                            .FromAbiHelper((global::System.Collections.Generic.ICollection<KeyValuePair<K, V>>)this, null));
+
+                        return interfaceType;
+                    }
+
+                    Type iListKVP = typeof(IList<>).MakeGenericType(itemType.GetGenericArguments());
+                    if (IsInterfaceImplemented(iListKVP.TypeHandle, false))
+                    {
+                        var hybrid = typeof(ABI.System.Collections.ICollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
+
+                        AdditionalTypeData.GetOrAdd(hybrid,
+                            (hybrid) => new ABI.System.Collections.Generic.IList<KeyValuePair<K, V>>
+                            .FromAbiHelper((global::System.Collections.Generic.ICollection<KeyValuePair<K, V>>)this);
+
+                        return interfaceType;
                     }
                 }
                 Type iList = typeof(IList<>).MakeGenericType(new[] { itemType });
