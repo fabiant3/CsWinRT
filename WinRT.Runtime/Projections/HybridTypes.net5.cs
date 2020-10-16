@@ -10,18 +10,6 @@ using WinRT;
 namespace ABI.System.Collections
 {
     [DynamicInterfaceCastableImplementation]
-    interface IEnumerableHybrid : global::System.Collections.IEnumerable
-    {
-        private static IEnumerable GetHelper(IWinRTObject _this)
-        {
-            return (IEnumerable)_this.GetOrCreateTypeHelperData(typeof(ABI.System.Collections.IEnumerableHybrid).TypeHandle,
-                () => throw new InvalidOperationException("Hybrid type should not have been stored as helper type : hybrid type is IEnumerableHybrid"));
-        }
-
-        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetHelper((IWinRTObject)this).GetEnumerator();
-    }
-    
-    [DynamicInterfaceCastableImplementation]
     interface IReadOnlyCollectionHybrid<T> : global::System.Collections.Generic.IReadOnlyCollection<T>
     {
         private static IReadOnlyCollection<T> GetHelper(IWinRTObject _this)
