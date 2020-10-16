@@ -383,6 +383,7 @@ namespace ABI.System.Collections
     using global::System;
     using global::System.Runtime.CompilerServices;
     using global::Microsoft.UI.Xaml.Interop;
+    using global::System.Linq.Expressions;
 
     [DynamicInterfaceCastableImplementation]
     [Guid("036D2C08-DF29-41AF-8AA2-D774BE62BA6F")]
@@ -396,7 +397,8 @@ namespace ABI.System.Collections
 
             public AdaptiveFromAbiHelper(RuntimeTypeHandle runtimeTypeHandle, IWinRTObject winRTObject)
             {
-                _delegate = ((runtimeTypeHandle)winRTObject).GetEnumerator();
+                global::System.Linq.Expressions.Expression<Func<global::System.Collections.IEnumerator>> expr = ((typeof(runtimeTypeHandle))winRTObject).GetEnumerator();
+                _delegate = expr.Compile();
             }
 
             public global::System.Collections.IEnumerator GetEnumerator() => _delegate();
