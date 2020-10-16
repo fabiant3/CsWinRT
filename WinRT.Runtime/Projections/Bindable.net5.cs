@@ -390,6 +390,18 @@ namespace ABI.System.Collections
     {
         public static string GetGuidSignature() => GuidGenerator.GetSignature(typeof(IEnumerable));
 
+        public class AdaptiveFromAbiHelper : global::System.Collections.IEnumerable
+        {
+            Func<global::System.Collections.IEnumerator> _delegate;
+
+            public AdaptiveFromAbiHelper(RuntimeTypeHandle runtimeTypeHandle, IWinRTObject winRTObject)
+            {
+                _delegate = ((runtimeTypeHandle)winRTObject).GetEnumerator();
+            }
+
+            public global::System.Collections.IEnumerator GetEnumerator() => _delegate();
+        }
+
         public class FromAbiHelper : global::System.Collections.IEnumerable
         {
             private readonly global::System.Collections.IEnumerable _iterable;

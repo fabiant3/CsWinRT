@@ -96,8 +96,7 @@ namespace WinRT
             if (typeof(System.Collections.IEnumerable).IsAssignableFrom(helperType))
             {
                 RuntimeTypeHandle projectIEnum = typeof(ABI.System.Collections.IEnumerable).TypeHandle;
-                // todo: below should NOT use FromAbiHelper, but the soon to be made AdaptiveFromAbiHelper
-                AdditionalTypeData.GetOrAdd(projectIEnum, (_) => new ABI.System.Collections.IEnumerable.FromAbiHelper((ABI.System.Collections.IEnumerable)this));
+                AdditionalTypeData.GetOrAdd(projectIEnum, (_) => new ABI.System.Collections.IEnumerable.AdaptiveFromAbiHelper(interfaceType, this));
             }
 
             var vftblType = helperType.GetNestedType("Vftbl");
@@ -146,7 +145,6 @@ namespace WinRT
                     Type iReadOnlyDictionary = typeof(IReadOnlyDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iReadOnlyDictionary.TypeHandle, false))
                     {
-                        
                         AdditionalTypeData.GetOrAdd(hybrid,
                             (hybrid) => new ABI.System.Collections.Generic.IReadOnlyDictionary<K, V>
                             .FromAbiHelper((global::Windows.Foundation.Collections.IMapView<K, V>)this, NativeObject));
