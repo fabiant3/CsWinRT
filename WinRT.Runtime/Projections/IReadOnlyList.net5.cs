@@ -54,7 +54,7 @@ namespace ABI.System.Collections.Generic
             private readonly global::Windows.Foundation.Collections.IVectorView<T> _vectorView;
             private readonly global::System.Collections.Generic.IEnumerable<T> _enumerable;
 
-            public FromAbiHelper(global::Windows.Foundation.Collections.IVectorView<T> vectorView, ObjectReference<Vftbl> objRef)
+            public FromAbiHelper(global::Windows.Foundation.Collections.IVectorView<T> vectorView, IObjectReference objRef)
             {
                 _vectorView = vectorView;
                 _enumerable = (global::System.Collections.Generic.IEnumerable<T>)new IInspectable(objRef);
