@@ -92,6 +92,14 @@ namespace WinRT
                 }
                 return false;
             }
+
+            if (typeof(System.Collections.IEnumerable).IsAssignableFrom(helperType))
+            {
+                RuntimeTypeHandle projectIEnum = typeof(ABI.System.Collections.IEnumerable).TypeHandle;
+                // todo: below should NOT use FromAbiHelper, but the soon to be made AdaptiveFromAbiHelper
+                AdditionalTypeData.GetOrAdd(projectIEnum, (_) => new ABI.System.Collections.IEnumerable.FromAbiHelper((ABI.System.Collections.IEnumerable)this));
+            }
+
             var vftblType = helperType.GetNestedType("Vftbl");
             if (vftblType is null)
             {
@@ -127,19 +135,21 @@ namespace WinRT
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IReadOnlyCollection<>))
             {
-                Type itemType = type.GetGenericArguments()[0].GetGenericArguments()[0];
+                Type itemType = type.GetGenericArguments()[0];
 
                 if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
+                    var keyValuePairType = typeof(KeyValuePair).MakeGenericType(type.GetGenericArguments());
+                    var hybrid = typeof(ABI.System.Collections.IReadOnlyCollectionHybrid<>).MakeGenericType(keyValuePairType).TypeHandle;
+
                     // todo: find K, V ; properly call FromAbiHelper
                     Type iReadOnlyDictionary = typeof(IReadOnlyDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iReadOnlyDictionary.TypeHandle, false))
                     {
-                        var hybrid = typeof(ABI.System.Collections.IReadOnlyCollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
                         
                         AdditionalTypeData.GetOrAdd(hybrid,
                             (hybrid) => new ABI.System.Collections.Generic.IReadOnlyDictionary<K, V>
-                            .FromAbiHelper((global::System.Collections.Generic.IReadOnlyCollection<KeyValuePair<K, V>>)this));
+                            .FromAbiHelper((global::Windows.Foundation.Collections.IMapView<K, V>)this, NativeObject));
                         
                         return interfaceType;
                     }
@@ -148,11 +158,9 @@ namespace WinRT
                     Type iReadOnlyListKVP = typeof(IReadOnlyList<>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iReadOnlyListKVP.TypeHandle, false))
                     {
-                        var hybrid = typeof(ABI.System.Collections.IReadOnlyCollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
-                        
                         AdditionalTypeData.GetOrAdd(hybrid, 
                             (hybrid) => new ABI.System.Collections.Generic.IReadOnlyList<KeyValuePair<K, V>>
-                            .FromAbiHelper((global::System.Collections.Generic.IReadOnlyCollection<KeyValuePair<K, V>>)this));
+                            .FromAbiHelper((global::Windows.Foundation.Collections.IVectorView<KeyValuePair<K, V>>)this, NativeObject));
                         
                         return interfaceType;
                     }
@@ -169,14 +177,15 @@ namespace WinRT
                 Type itemType = type.GetGenericArguments()[0];
                 if (itemType.IsGenericType && itemType.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
+                    var keyValuePairType = typeof(KeyValuePair).MakeGenericType(type.GetGenericArguments());
+                    var hybrid = typeof(ABI.System.Collections.ICollectionHybrid<>).MakeGenericType(keyValuePairType).TypeHandle;
+
                     Type iDictionary = typeof(IDictionary<,>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iDictionary.TypeHandle, false))
                     {
-                        var hybrid = typeof(ABI.System.Collections.ICollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
-
                         AdditionalTypeData.GetOrAdd(hybrid,
                             (hybrid) => new ABI.System.Collections.Generic.IDictionary<K, V>
-                            .FromAbiHelper((global::System.Collections.Generic.ICollection<KeyValuePair<K, V>>)this, null));
+                            .FromAbiHelper((global::Windows.Foundation.Collections.IMap<K, V>)this));
 
                         return interfaceType;
                     }
@@ -184,11 +193,9 @@ namespace WinRT
                     Type iListKVP = typeof(IList<>).MakeGenericType(itemType.GetGenericArguments());
                     if (IsInterfaceImplemented(iListKVP.TypeHandle, false))
                     {
-                        var hybrid = typeof(ABI.System.Collections.ICollectionHybrid<KeyValuePair<K, V>>).TypeHandle;
-
                         AdditionalTypeData.GetOrAdd(hybrid,
                             (hybrid) => new ABI.System.Collections.Generic.IList<KeyValuePair<K, V>>
-                            .FromAbiHelper((global::System.Collections.Generic.ICollection<KeyValuePair<K, V>>)this);
+                            .FromAbiHelper((global::Windows.Foundation.Collections.IVector<KeyValuePair<K, V>>)this));
 
                         return interfaceType;
                     }
@@ -198,28 +205,6 @@ namespace WinRT
                 {
                     return GetInterfaceImplementation(iList.TypeHandle);
                 }
-            }
-            else if (type == typeof(System.Collections.IEnumerable))
-            {
-                // We want to see if the current object also implements IEnumerable generic, so we can promote its type
-                RuntimeTypeHandle iEnumGenericHandle = typeof(System.Collections.Generic.IEnumerable<object>).TypeHandle;
-                // In either case, add an entry in the AdditionalTypeData map for this object as a hybrid and corresponding Enumerable type
-                RuntimeTypeHandle hybrid = typeof(ABI.System.Collections.IEnumerableHybrid).TypeHandle;
-
-                if (IsInterfaceImplemented(iEnumGenericHandle, false))
-                {
-                    AdditionalTypeData.GetOrAdd(hybrid,
-                        (hybrid) => new ABI.System.Collections.Generic.IEnumerable<object>
-                        .FromAbiHelper((ABI.System.Collections.Generic.IEnumerable<object>)this));
-                }
-                else 
-                {
-                    AdditionalTypeData.GetOrAdd(hybrid,
-                        (hybrid) => new ABI.System.Collections.IEnumerable
-                        .FromAbiHelper((ABI.System.Collections.IEnumerable)this));
-                }
-                
-                return interfaceType;
             }
 
             var helperType = type.GetHelperType();
