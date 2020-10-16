@@ -84,7 +84,15 @@ namespace ABI.System.Collections.Generic
                 throw new InvalidOperationException("Unexpected type for enumerator");
             }
 
-            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
+            {
+                var first = ((global::Windows.Foundation.Collections.IIterable<T>)(IWinRTObject)_iterable).First();
+                if (first is global::ABI.System.Collections.Generic.IEnumerator<T> iterator)
+                {
+                    return iterator;
+                }
+                throw new InvalidOperationException("Unexpected type for enumerator");
+            }
         }
 
         internal sealed class ToAbiHelper : global::Windows.Foundation.Collections.IIterable<T>
@@ -179,7 +187,7 @@ namespace ABI.System.Collections.Generic
         }
 
         global::System.Collections.Generic.IEnumerator<T> global::System.Collections.Generic.IEnumerable<T>.GetEnumerator() => _FromIterable((IWinRTObject)this).GetEnumerator();
-        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => _FromIterable((IWinRTObject)this).GetEnumerator();
     }
     public static class IEnumerable_Delegates
     {

@@ -245,9 +245,11 @@ namespace ABI.System.Collections.Generic
                 }
             }
 
-            public global::System.Collections.Generic.IEnumerator<T> GetEnumerator() => ((global::System.Collections.Generic.IEnumerable<T>)(IWinRTObject)_vector).GetEnumerator();
+            public global::System.Collections.Generic.IEnumerator<T> GetEnumerator() =>
+                ((global::System.Collections.Generic.IEnumerable<T>)(IWinRTObject)_vector).GetEnumerator();
 
-            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() =>
+                ((global::System.Collections.Generic.IEnumerable<T>)(IWinRTObject)_vector).GetEnumerator();
         }
 
         public sealed class ToAbiHelper : global::Windows.Foundation.Collections.IVector<T>
@@ -925,7 +927,7 @@ namespace ABI.System.Collections.Generic
         void global::System.Collections.Generic.ICollection<T>.CopyTo(T[] array, int arrayIndex) => _FromVector((IWinRTObject)this).CopyTo(array, arrayIndex);
         bool global::System.Collections.Generic.ICollection<T>.Remove(T item) => _FromVector((IWinRTObject)this).Remove(item);
         global::System.Collections.Generic.IEnumerator<T> global::System.Collections.Generic.IEnumerable<T>.GetEnumerator() => _FromVector((IWinRTObject)this).GetEnumerator();
-        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => _FromVector((IWinRTObject)this).GetEnumerator();
     }
     public static class IList_Delegates
     {

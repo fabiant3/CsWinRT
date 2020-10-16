@@ -235,7 +235,7 @@ namespace ABI.System.Collections.Generic
 
             public global::System.Collections.Generic.IEnumerator<global::System.Collections.Generic.KeyValuePair<K, V>> GetEnumerator() => ((global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<K, V>>)(IWinRTObject)_map).GetEnumerator();
 
-            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => ((global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<K, V>>)(IWinRTObject)_map).GetEnumerator();
 
             private sealed class DictionaryKeyCollection : global::System.Collections.Generic.ICollection<K>
             {
@@ -291,7 +291,8 @@ namespace ABI.System.Collections.Generic
                     throw new NotSupportedException(ErrorStrings.NotSupported_KeyCollectionSet);
                 }
 
-                global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+                global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => 
+                    new DictionaryKeyEnumerator(dictionary);
 
                 public global::System.Collections.Generic.IEnumerator<K> GetEnumerator() =>
                     new DictionaryKeyEnumerator(dictionary);
@@ -389,7 +390,10 @@ namespace ABI.System.Collections.Generic
                     throw new NotSupportedException(ErrorStrings.NotSupported_ValueCollectionSet);
                 }
 
-                IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+                IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
+                {
+                    return new DictionaryValueEnumerator(dictionary);
+                }
 
                 public global::System.Collections.Generic.IEnumerator<V> GetEnumerator()
                 {
@@ -829,7 +833,7 @@ namespace ABI.System.Collections.Generic
         void global::System.Collections.Generic.ICollection<global::System.Collections.Generic.KeyValuePair<K, V>>.CopyTo(global::System.Collections.Generic.KeyValuePair<K, V>[] array, int arrayIndex) => _FromMap((IWinRTObject)this).CopyTo(array, arrayIndex);
         bool global::System.Collections.Generic.ICollection<global::System.Collections.Generic.KeyValuePair<K, V>>.Remove(global::System.Collections.Generic.KeyValuePair<K, V> item) => _FromMap((IWinRTObject)this).Remove(item);
         global::System.Collections.Generic.IEnumerator<global::System.Collections.Generic.KeyValuePair<K, V>> global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<K, V>>.GetEnumerator() => _FromMap((IWinRTObject)this).GetEnumerator();
-        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => _FromMap((IWinRTObject)this).GetEnumerator();
     }
 
     public static class IDictionary_Delegates

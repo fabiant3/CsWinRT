@@ -99,7 +99,7 @@ namespace ABI.System.Collections.Generic
 
             public global::System.Collections.Generic.IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
 
-            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+            global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => _enumerable.GetEnumerator();
         }
 
         public sealed class ToAbiHelper : global::Windows.Foundation.Collections.IVectorView<T>
@@ -432,7 +432,7 @@ namespace ABI.System.Collections.Generic
 
         global::System.Collections.Generic.IEnumerator<T> global::System.Collections.Generic.IEnumerable<T>.GetEnumerator() => _FromVectorView((IWinRTObject)this).GetEnumerator();
 
-        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator global::System.Collections.IEnumerable.GetEnumerator() => _FromVectorView((IWinRTObject)this).GetEnumerator();
     }
 
     public static class IReadOnlyList_Delegates
