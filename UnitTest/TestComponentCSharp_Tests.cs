@@ -104,7 +104,7 @@ namespace UnitTest
             Assert.Equal(read, data);
         }
 
-        [Fact]
+        [Fact] // this test fails every other time I run it, passes the others. think the changes in this branch affected it somehow
         public void TestStreamWriteAndRead()
         {
             Assert.True(InvokeStreamWriteAndReadAsync().Wait(1000));
@@ -131,20 +131,30 @@ namespace UnitTest
             Assert.Equal(2, array.Length);
         }
 
-        [Fact]
-        public async void TestStorageFile()
+        async Task InvokeCreateStorageFile()
         {
-            StorageFile file = await StorageFile.GetFileFromPathAsync("C:\\Program Files\\Git\\LICENSE.txt");
+            StorageFile file = await StorageFile.GetFileFromPathAsync(System.IO.Path.GetTempPath());
             var handle = WindowsRuntimeStorageExtensions.CreateSafeFileHandle(file, FileAccess.Read);
             Assert.NotNull(handle);
         }
 
         [Fact]
-        public async void TestStorageFolder()
+        public void TestStorageFile()
         {
-            StorageFolder folder = await StorageFolder.GetFolderFromPathAsync("C:\\Program Files\\Git");
+            Assert.True(InvokeCreateSafeFileHandle().Wait(1000));
+        }
+
+        async Task InvokeCreateStorageFolder()
+        {
+            StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetTempPath());
             var handle = WindowsRuntimeStorageExtensions.CreateSafeFileHandle(folder, "LICENSE.txt", FileMode.Open, FileAccess.Read);
             Assert.NotNull(handle);
+        }
+
+        [Fact]
+        public void TestStorageFolder()
+        {
+            Assert.True(InvokeCreateSafeFileHandle2().Wait(1000));
         }
 #endif
 
